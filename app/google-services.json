@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "716860883404",
+    "project_id": "hnotes-2b772",
+    "storage_bucket": "hnotes-2b772.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:716860883404:android:c00439aae43e52c28e9d69",
+        "android_client_info": {
+          "package_name": "com.kieudatquochung.hnotes"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5N2QH4ZQNrw7IlFHX7kkL83nN_dCSX70"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
