@@ -1,15 +1,16 @@
 package com.kieudatquochung.hnotes;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -21,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     EditText mLoginEmail, mLoginPassword;
     Button mLoginBtn;
     TextView mGoToForgotPassword, mGoToSignUp;
+    ProgressBar mProgressBarOfMainActivity;
 
     private FirebaseAuth firebaseAuth;
 
@@ -34,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
         mLoginBtn = findViewById(R.id.LoginBtn);
         mGoToForgotPassword = findViewById(R.id.goToForgotPassword);
         mGoToSignUp = findViewById(R.id.goToSignUp);
+        mProgressBarOfMainActivity = findViewById(R.id.progressBarOfMainActivity);
 
         firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
@@ -69,6 +72,8 @@ public class MainActivity extends AppCompatActivity {
                 else
                 {
                     //Login the user
+                    mProgressBarOfMainActivity.setVisibility(View.VISIBLE);
+
                     firebaseAuth.signInWithEmailAndPassword(mail, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
@@ -79,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
                             else
                             {
                                 Toast.makeText(getApplicationContext(), "Account Doesn't Exist", Toast.LENGTH_SHORT).show();
+                                mProgressBarOfMainActivity.setVisibility(View.INVISIBLE);
                             }
                         }
                     });
@@ -91,11 +97,12 @@ public class MainActivity extends AppCompatActivity {
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
         if (firebaseUser.isEmailVerified() == true)
         {
-            Toast.makeText(getApplicationContext(), "Log In", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Logged In", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(MainActivity.this, NotesActivity.class));
         }
         else
         {
+            mProgressBarOfMainActivity.setVisibility(View.INVISIBLE);
             Toast.makeText(getApplicationContext(), "Verify your mail first", Toast.LENGTH_SHORT).show();
             firebaseAuth.signOut();
         }

@@ -7,6 +7,13 @@
     android:background="@color/background"
     android:padding="16dp"
     tools:context=".CreateNotesActivity">
+    <ProgressBar
+        android:id="@+id/progressBarOfCreateNoteActivity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="invisible"
+        android:layout_marginTop="10dp"/>
         <RelativeLayout
             android:id="@+id/titleBarLayout"
             android:layout_width="match_parent"
