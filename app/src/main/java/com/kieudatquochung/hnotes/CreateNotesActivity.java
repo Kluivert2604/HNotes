@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,9 @@ public class CreateNotesActivity extends AppCompatActivity {
     EditText mNotesTitleText, mNotesContentText;
     ImageButton mImageBackBtn, mImageDoneBtn;
     ProgressBar mProgressBarOfCreateNoteActivity;
+    String title, content, docId;
+    boolean isEditMode = false;
+    TextView mDeleteNoteTextViewBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,11 +34,27 @@ public class CreateNotesActivity extends AppCompatActivity {
         mImageBackBtn = findViewById(R.id.imageBackBtn);
         mImageDoneBtn = findViewById(R.id.imageDoneBtn);
         mProgressBarOfCreateNoteActivity = findViewById(R.id.progressBarOfCreateNoteActivity);
+        mDeleteNoteTextViewBtn = findViewById(R.id.deleteNoteTextViewBtn);
 
+        //Receive data
+        title = getIntent().getStringExtra("title");
+        content = getIntent().getStringExtra("content");
+        docId = getIntent().getStringExtra("docId");
+
+        if (docId != null && !docId.isEmpty())
+        {
+            isEditMode = true;
+        }
+
+        mNotesTitleText.setText(title);
+        mNotesContentText.setText(content);
+        if (isEditMode)
+        {
+            mDeleteNoteTextViewBtn.setVisibility(View.VISIBLE);
+        }
         mImageDoneBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mProgressBarOfCreateNoteActivity.setVisibility(View.VISIBLE);
                 saveNotes();
             }
         });
@@ -42,6 +62,12 @@ public class CreateNotesActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 onBackPressed();
+            }
+        });
+        mDeleteNoteTextViewBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteNoteFromFirebase();
             }
         });
     }
@@ -61,8 +87,16 @@ public class CreateNotesActivity extends AppCompatActivity {
     void saveNoteToFirebase(Note note)
     {
         DocumentReference documentReference;
-        documentReference = Utility.getCollectionReferenceForNotes().document();
-
+        if (isEditMode)
+        {
+            //Update the note
+            documentReference = Utility.getCollectionReferenceForNotes().document(docId);
+        }
+        else
+        {
+            //Create new note
+            documentReference = Utility.getCollectionReferenceForNotes().document();
+        }
         documentReference.set(note).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
@@ -80,5 +114,25 @@ public class CreateNotesActivity extends AppCompatActivity {
             }
         });
     }
+    void deleteNoteFromFirebase()
+    {
+        DocumentReference documentReference;
+        documentReference = Utility.getCollectionReferenceForNotes().document(docId);
+        documentReference.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful())
+                {
 
+                    //Note is deleted
+                    Toast.makeText(getApplicationContext(), "Note deleted successful", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+                else
+                {
+                    Toast.makeText(getApplicationContext(), "Failed while deleting note", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
 }
