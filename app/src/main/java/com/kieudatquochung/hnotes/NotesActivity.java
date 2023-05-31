@@ -49,8 +49,28 @@ public class NotesActivity extends AppCompatActivity {
                 showMenu();
             }
         });
-
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String newText) {
+                processSearch(newText);
+                return false;
+            }
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                processSearch(newText);
+                return false;
+            }
+        });
         setupRecyclerView();
+    }
+    private void processSearch(String newText)
+    {
+        Query query = Utility.getCollectionReferenceForNotes().orderBy("title").startAt(newText).endAt(newText+ "\uf8ff");
+        FirestoreRecyclerOptions<Note> options = new FirestoreRecyclerOptions.Builder<Note>()
+                .setQuery(query, Note.class).build();
+        noteAdapter = new NoteAdapter(options, this);
+        noteAdapter.startListening();
+        mRecyclerView.setAdapter(noteAdapter);
     }
     private void showMenu()
     {
