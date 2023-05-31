@@ -5,7 +5,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -22,7 +21,7 @@ public class CreateNotesActivity extends AppCompatActivity {
     ProgressBar mProgressBarOfCreateNoteActivity;
     String title, content, docId;
     boolean isEditMode = false;
-    TextView mDeleteNoteTextViewBtn;
+//    TextView mDeleteNoteTextViewBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +33,7 @@ public class CreateNotesActivity extends AppCompatActivity {
         mImageBackBtn = findViewById(R.id.imageBackBtn);
         mImageDoneBtn = findViewById(R.id.imageDoneBtn);
         mProgressBarOfCreateNoteActivity = findViewById(R.id.progressBarOfCreateNoteActivity);
-        mDeleteNoteTextViewBtn = findViewById(R.id.deleteNoteTextViewBtn);
+//        mDeleteNoteTextViewBtn = findViewById(R.id.deleteNoteTextViewBtn);
 
         //Receive data
         title = getIntent().getStringExtra("title");
@@ -48,10 +47,10 @@ public class CreateNotesActivity extends AppCompatActivity {
 
         mNotesTitleText.setText(title);
         mNotesContentText.setText(content);
-        if (isEditMode)
-        {
-            mDeleteNoteTextViewBtn.setVisibility(View.VISIBLE);
-        }
+//        if (isEditMode)
+//        {
+//            mDeleteNoteTextViewBtn.setVisibility(View.VISIBLE);
+//        }
         mImageDoneBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -64,18 +63,23 @@ public class CreateNotesActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
-        mDeleteNoteTextViewBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                deleteNoteFromFirebase();
-            }
-        });
+//        mDeleteNoteTextViewBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                deleteNoteFromFirebase();
+//            }
+//        });
     }
     void saveNotes() {
         String noteTitle = mNotesTitleText.getText().toString().trim();
         String noteContent = mNotesContentText.getText().toString().trim();
         if (noteTitle == null || noteTitle.isEmpty()) {
             mNotesTitleText.setError("Title is Required");
+            return;
+        }
+        if (noteContent.isEmpty())
+        {
+            Toast.makeText(getApplicationContext(), "Please add some note", Toast.LENGTH_SHORT).show();
             return;
         }
         Note note = new Note();
@@ -114,25 +118,25 @@ public class CreateNotesActivity extends AppCompatActivity {
             }
         });
     }
-    void deleteNoteFromFirebase()
-    {
-        DocumentReference documentReference;
-        documentReference = Utility.getCollectionReferenceForNotes().document(docId);
-        documentReference.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful())
-                {
-
-                    //Note is deleted
-                    Toast.makeText(getApplicationContext(), "Note deleted successful", Toast.LENGTH_SHORT).show();
-                    finish();
-                }
-                else
-                {
-                    Toast.makeText(getApplicationContext(), "Failed while deleting note", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
+//    void deleteNoteFromFirebase()
+//    {
+//        DocumentReference documentReference;
+//        documentReference = Utility.getCollectionReferenceForNotes().document(docId);
+//        documentReference.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+//            @Override
+//            public void onComplete(@NonNull Task<Void> task) {
+//                if (task.isSuccessful())
+//                {
+//
+//                    //Note is deleted
+//                    Toast.makeText(getApplicationContext(), "Note deleted successful", Toast.LENGTH_SHORT).show();
+//                    finish();
+//                }
+//                else
+//                {
+//                    Toast.makeText(getApplicationContext(), "Failed while deleting note", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        });
+//    }
 }

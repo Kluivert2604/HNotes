@@ -21,6 +21,17 @@
             android:textSize="18sp"
             android:layout_marginVertical="4dp"
             android:layout_weight="1"/>
+        <ImageView
+            android:id="@+id/menuPopButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0"
+            android:src="@drawable/baseline_more_vert_24"/>
+        <ImageView
+            android:id="@+id/imageView_pin"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="end"/>
     </LinearLayout>
     <TextView
         android:id="@+id/note_Content_Text_View"
