@@ -18,15 +18,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 public class NoteAdapter extends FirestoreRecyclerAdapter<Note, NoteAdapter.NoteViewHolder> {
     Context context;
-    FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
     public NoteAdapter(@NonNull FirestoreRecyclerOptions<Note> options, Context context) {
         super(options);
         this.context = context;
@@ -37,14 +33,8 @@ public class NoteAdapter extends FirestoreRecyclerAdapter<Note, NoteAdapter.Note
         holder.mContentTextView.setText(note.content);
         holder.mTimestampTextView.setText(Utility.timestampToString(note.timestamp));
         String docId = this.getSnapshots().getSnapshot(position).getId();
-        ImageView mMenuPopButton = holder.itemView.findViewById(R.id.menuPopButton);
-        firebaseFirestore.collection("note").document(docId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                DocumentReference documentReference = documentSnapshot.toObject(DocumentReference.class);
-            }
-        });
 
+        ImageView mMenuPopButton = holder.itemView.findViewById(R.id.menuPopButton);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -63,6 +53,7 @@ public class NoteAdapter extends FirestoreRecyclerAdapter<Note, NoteAdapter.Note
                 popupMenu.getMenu().add("Pin/Unpin").setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(@NonNull MenuItem item) {
+                        Toast.makeText(v.getContext(), "This is Clicked", Toast.LENGTH_SHORT).show();
                         return false;
                     }
                 });
