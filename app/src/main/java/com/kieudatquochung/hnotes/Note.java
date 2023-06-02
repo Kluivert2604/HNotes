@@ -3,12 +3,30 @@ package com.kieudatquochung.hnotes;
 import com.google.firebase.Timestamp;
 
 public class Note {
+    String color;
     String content;
     String title;
     Timestamp timestamp;
+    String imagePath;
 
     public Note() {
 
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
     }
 
     public String getContent() {

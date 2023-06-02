@@ -4,4 +4,11 @@
     <color name="white">#FFFFFFFF</color>
     <color name="my_primary">#93B2E7</color>
     <color name="background">#D8F7FA</color>
+    <color name="colorDefaultNoteColor">#333333</color>
+    <color name="colorMiscellaneousBackground">#1F1F1F</color>
+    <color name="colorNoteColor2">#FDB33B</color>
+    <color name="colorNoteColor3">#FF4842</color>
+    <color name="colorNoteColor4">#3A52Fc</color>
+    <color name="colorNoteColor5">#000000</color>
+    <color name="colorIcon">#A4A4A4</color>
 </resources>

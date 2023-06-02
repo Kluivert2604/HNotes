@@ -2,12 +2,15 @@ package com.kieudatquochung.hnotes;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -89,12 +92,26 @@ public class NoteAdapter extends FirestoreRecyclerAdapter<Note, NoteAdapter.Note
     }
     class NoteViewHolder extends RecyclerView.ViewHolder
     {
+        LinearLayout mLayoutNote;
         TextView mTitleTextView, mContentTextView, mTimestampTextView;
         public NoteViewHolder(@NonNull View itemView) {
             super(itemView);
             mTitleTextView = itemView.findViewById(R.id.note_Title_Text_View);
             mContentTextView = itemView.findViewById(R.id.note_Content_Text_View);
             mTimestampTextView = itemView.findViewById(R.id.note_Timestamp_Text_View);
+            mLayoutNote = itemView.findViewById(R.id.layoutNote);
+        }
+        void setNote(Note note)
+        {
+            GradientDrawable gradientDrawable = (GradientDrawable) mLayoutNote.getBackground();
+            if (note.getColor() != null)
+            {
+                gradientDrawable.setColor(Color.parseColor(note.getColor()));
+            } else
+            {
+                gradientDrawable.setColor(Color.parseColor("#333333"));
+            }
+
         }
     }
 }
