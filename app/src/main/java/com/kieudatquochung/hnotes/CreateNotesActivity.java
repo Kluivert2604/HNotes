@@ -7,20 +7,26 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Patterns;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -37,10 +43,12 @@ public class CreateNotesActivity extends AppCompatActivity {
     EditText mNotesTitleText, mNotesContentText;
     ImageButton mImageBackBtn, mImageDoneBtn;
     ProgressBar mProgressBarOfCreateNoteActivity;
-    String title, content, docId;
+    String title, content, docId, image;
     boolean isEditMode = false;
     View mViewSubtitleIndicator;
     ImageView mImageNote;
+    TextView mTextWebURL;
+    LinearLayout mLayoutWebURL;
 //    TextView mDeleteNoteTextViewBtn;
 
     String selectedNoteColor;
@@ -48,6 +56,8 @@ public class CreateNotesActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE_STORAGE_PERMISSION = 1;
     private static final int REQUEST_CODE_SELECT_IMAGE = 2;
+
+    private AlertDialog mDialogAddURL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,12 +71,16 @@ public class CreateNotesActivity extends AppCompatActivity {
         mProgressBarOfCreateNoteActivity = findViewById(R.id.progressBarOfCreateNoteActivity);
         mViewSubtitleIndicator = findViewById(R.id.viewSubtitleIndicator);
         mImageNote = findViewById(R.id.imageNote);
+        mTextWebURL = findViewById(R.id.textWebURL);
+        mLayoutWebURL = findViewById(R.id.layoutWebURL);
 //        mDeleteNoteTextViewBtn = findViewById(R.id.deleteNoteTextViewBtn);
 
         //Receive data
         title = getIntent().getStringExtra("title");
         content = getIntent().getStringExtra("content");
         docId = getIntent().getStringExtra("docId");
+        image = getIntent().getStringExtra("image");
+
 
         if (docId != null && !docId.isEmpty())
         {
@@ -77,7 +91,7 @@ public class CreateNotesActivity extends AppCompatActivity {
         mNotesContentText.setText(content);
 
         selectedNoteColor = "#333333";
-        selectedImagePath = " ";
+        selectedImagePath = "";
 
         initMiscellaneous();
         setSubtitleIndicatorColor();
@@ -123,6 +137,10 @@ public class CreateNotesActivity extends AppCompatActivity {
         note.setColor(selectedNoteColor);
         note.setImagePath(selectedImagePath);
         saveNoteToFirebase(note);
+
+        if (mLayoutWebURL.getVisibility() == View.VISIBLE){
+            note.setWebLink(mTextWebURL.getText().toString());
+        }
     }
     void saveNoteToFirebase(Note note)
     {
@@ -176,6 +194,7 @@ public class CreateNotesActivity extends AppCompatActivity {
         final ImageView imageColor3 = layoutMiscellaneous.findViewById(R.id.imageColor3);
         final ImageView imageColor4 = layoutMiscellaneous.findViewById(R.id.imageColor4);
         final ImageView imageColor5 = layoutMiscellaneous.findViewById(R.id.imageColor5);
+        final ImageView imageColor6 = layoutMiscellaneous.findViewById(R.id.imageColor6);
 
         layoutMiscellaneous.findViewById(R.id.viewColor1).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -186,6 +205,7 @@ public class CreateNotesActivity extends AppCompatActivity {
                 imageColor3.setImageResource(0);
                 imageColor4.setImageResource(0);
                 imageColor5.setImageResource(0);
+                imageColor6.setImageResource(0);
                 setSubtitleIndicatorColor();
             }
         });
@@ -199,6 +219,7 @@ public class CreateNotesActivity extends AppCompatActivity {
                 imageColor3.setImageResource(0);
                 imageColor4.setImageResource(0);
                 imageColor5.setImageResource(0);
+                imageColor6.setImageResource(0);
                 setSubtitleIndicatorColor();
             }
         });
@@ -211,6 +232,7 @@ public class CreateNotesActivity extends AppCompatActivity {
                 imageColor3.setImageResource(R.drawable.baseline_done_24);
                 imageColor4.setImageResource(0);
                 imageColor5.setImageResource(0);
+                imageColor6.setImageResource(0);
                 setSubtitleIndicatorColor();
             }
         });
@@ -223,6 +245,7 @@ public class CreateNotesActivity extends AppCompatActivity {
                 imageColor3.setImageResource(0);
                 imageColor4.setImageResource(R.drawable.baseline_done_24);
                 imageColor5.setImageResource(0);
+                imageColor6.setImageResource(0);
                 setSubtitleIndicatorColor();
             }
         });
@@ -235,6 +258,20 @@ public class CreateNotesActivity extends AppCompatActivity {
                 imageColor3.setImageResource(0);
                 imageColor4.setImageResource(0);
                 imageColor5.setImageResource(R.drawable.baseline_done_24);
+                imageColor6.setImageResource(0);
+                setSubtitleIndicatorColor();
+            }
+        });
+        layoutMiscellaneous.findViewById(R.id.viewColor6).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectedNoteColor = "#FFFFFFFF";
+                imageColor1.setImageResource(0);
+                imageColor2.setImageResource(0);
+                imageColor3.setImageResource(0);
+                imageColor4.setImageResource(0);
+                imageColor5.setImageResource(0);
+                imageColor6.setImageResource(R.drawable.baseline_done_24);
                 setSubtitleIndicatorColor();
             }
         });
@@ -251,6 +288,13 @@ public class CreateNotesActivity extends AppCompatActivity {
                 } else {
                     selectImage();
                 }
+            }
+        });
+        layoutMiscellaneous.findViewById(R.id.layoutAddUrl).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                showAddURLDialog();
             }
         });
     }
@@ -307,31 +351,46 @@ public class CreateNotesActivity extends AppCompatActivity {
             filePath = contentUri.getPath();
         }else {
             cursor.moveToFirst();
-            int index = cursor.getColumnIndex("data");
+            int index = cursor.getColumnIndex("_data");
             filePath = cursor.getString(index);
             cursor.close();
         }
         return filePath;
     }
-    //    void deleteNoteFromFirebase()
-//    {
-//        DocumentReference documentReference;
-//        documentReference = Utility.getCollectionReferenceForNotes().document(docId);
-//        documentReference.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-//            @Override
-//            public void onComplete(@NonNull Task<Void> task) {
-//                if (task.isSuccessful())
-//                {
-//
-//                    //Note is deleted
-//                    Toast.makeText(getApplicationContext(), "Note deleted successful", Toast.LENGTH_SHORT).show();
-//                    finish();
-//                }
-//                else
-//                {
-//                    Toast.makeText(getApplicationContext(), "Failed while deleting note", Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//        });
-//    }
+    private void showAddURLDialog(){
+        if (mDialogAddURL == null){
+            AlertDialog.Builder builder = new AlertDialog.Builder(CreateNotesActivity.this);
+            View view = LayoutInflater.from(this).inflate(R.layout.layout_add_uri,(ViewGroup) findViewById(R.id.layoutAddUrlContainer));
+            builder.setView(view);
+            mDialogAddURL = builder.create();
+            if (mDialogAddURL.getWindow() != null){
+                mDialogAddURL.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+            }
+
+            final EditText mInputURL = view.findViewById(R.id.inputURL);
+            mInputURL.requestFocus();
+
+            view.findViewById(R.id.textAdd).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mInputURL.getText().toString().trim().isEmpty()){
+                        Toast.makeText(CreateNotesActivity.this, "Enter URL", Toast.LENGTH_SHORT).show();
+                    } else if (!Patterns.WEB_URL.matcher(mInputURL.getText().toString()).matches()) {
+                        Toast.makeText(CreateNotesActivity.this, "Enter valid URL", Toast.LENGTH_SHORT).show();
+                    } else {
+                        mTextWebURL.setText(mInputURL.getText().toString());
+                        mLayoutWebURL.setVisibility(View.VISIBLE);
+                        mDialogAddURL.dismiss();
+                    }
+                }
+            });
+            view.findViewById(R.id.textCancel).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mDialogAddURL.dismiss();
+                }
+            });
+        }
+        mDialogAddURL.show();
+    }
 }

@@ -8,9 +8,18 @@ public class Note {
     String title;
     Timestamp timestamp;
     String imagePath;
+    String webLink;
 
     public Note() {
 
+    }
+
+    public String getWebLink() {
+        return webLink;
+    }
+
+    public void setWebLink(String webLink) {
+        this.webLink = webLink;
     }
 
     public String getImagePath() {

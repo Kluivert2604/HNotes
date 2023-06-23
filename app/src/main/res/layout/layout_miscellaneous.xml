@@ -119,6 +119,24 @@
                 app:tint="@color/white">
             </ImageView>
         </FrameLayout>
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+            <View
+                android:id="@+id/viewColor6"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/background_note_color_6">
+            </View>
+            <ImageView
+                android:id="@+id/imageColor6"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="10dp"
+                app:tint="@color/white">
+            </ImageView>
+        </FrameLayout>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -153,6 +171,30 @@
             android:textSize="12sp"
             android:layout_gravity="center">
         </TextView>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/layoutAddUrl"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        tools:ignore="UseCompoundDrawables">
+        <ImageView
+            android:layout_width="22sp"
+            android:layout_height="22sp"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/ic_browser"
+            app:tint="@color/colorIcon" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="Add URL"
+            android:textSize="12sp"
+            android:textColor="@color/colorIcon"/>
     </LinearLayout>
 
 </LinearLayout>

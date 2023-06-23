@@ -2,6 +2,7 @@ package com.kieudatquochung.hnotes;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.view.Gravity;
@@ -23,6 +24,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
+import com.makeramen.roundedimageview.RoundedImageView;
 
 public class NoteAdapter extends FirestoreRecyclerAdapter<Note, NoteAdapter.NoteViewHolder> {
     Context context;
@@ -36,7 +38,7 @@ public class NoteAdapter extends FirestoreRecyclerAdapter<Note, NoteAdapter.Note
         holder.mContentTextView.setText(note.content);
         holder.mTimestampTextView.setText(Utility.timestampToString(note.timestamp));
         String docId = this.getSnapshots().getSnapshot(position).getId();
-
+        holder.setNote(note);
         ImageView mMenuPopButton = holder.itemView.findViewById(R.id.menuPopButton);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -45,6 +47,7 @@ public class NoteAdapter extends FirestoreRecyclerAdapter<Note, NoteAdapter.Note
                 intent.putExtra("title", note.getTitle());
                 intent.putExtra("content", note.getContent());
                 intent.putExtra("docId", docId);
+                intent.putExtra("image", note.getImagePath());
                 context.startActivity(intent);
             }
         });
@@ -84,6 +87,7 @@ public class NoteAdapter extends FirestoreRecyclerAdapter<Note, NoteAdapter.Note
             }
         });
     }
+
     @NonNull
     @Override
     public NoteViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -94,15 +98,16 @@ public class NoteAdapter extends FirestoreRecyclerAdapter<Note, NoteAdapter.Note
     {
         LinearLayout mLayoutNote;
         TextView mTitleTextView, mContentTextView, mTimestampTextView;
+        RoundedImageView mImageNote;
         public NoteViewHolder(@NonNull View itemView) {
             super(itemView);
             mTitleTextView = itemView.findViewById(R.id.note_Title_Text_View);
             mContentTextView = itemView.findViewById(R.id.note_Content_Text_View);
             mTimestampTextView = itemView.findViewById(R.id.note_Timestamp_Text_View);
             mLayoutNote = itemView.findViewById(R.id.layoutNote);
+            mImageNote = itemView.findViewById(R.id.imageNote);
         }
-        void setNote(Note note)
-        {
+        public void setNote(Note note) {
             GradientDrawable gradientDrawable = (GradientDrawable) mLayoutNote.getBackground();
             if (note.getColor() != null)
             {
@@ -111,7 +116,15 @@ public class NoteAdapter extends FirestoreRecyclerAdapter<Note, NoteAdapter.Note
             {
                 gradientDrawable.setColor(Color.parseColor("#333333"));
             }
-
+            if (note.getImagePath() != null)
+            {
+                mImageNote.setImageBitmap(BitmapFactory.decodeFile(note.getImagePath()));
+                mImageNote.setVisibility(View.VISIBLE);
+            }
+            else
+            {
+                mImageNote.setVisibility(View.GONE);
+            }
         }
     }
 }

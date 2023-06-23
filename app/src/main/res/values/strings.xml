@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">HNotes</string>
+    <string name="enter_url">Enter URL</string>
 </resources>
