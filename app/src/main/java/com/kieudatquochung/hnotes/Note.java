@@ -7,7 +7,7 @@ public class Note {
     String content;
     String title;
     Timestamp timestamp;
-    String imagePath;
+    private String imagePath;
     String webLink;
 
     public Note() {
