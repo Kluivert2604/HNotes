@@ -68,6 +68,7 @@ public class NotesActivity extends AppCompatActivity {
         Query query = Utility.getCollectionReferenceForNotes().orderBy("title").startAt(newText).endAt(newText+ "\uf8ff");
         FirestoreRecyclerOptions<Note> options = new FirestoreRecyclerOptions.Builder<Note>()
                 .setQuery(query, Note.class).build();
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         noteAdapter = new NoteAdapter(options, this);
         noteAdapter.startListening();
         mRecyclerView.setAdapter(noteAdapter);

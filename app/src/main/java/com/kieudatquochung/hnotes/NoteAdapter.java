@@ -1,6 +1,7 @@
 package com.kieudatquochung.hnotes;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -83,6 +85,14 @@ public class NoteAdapter extends FirestoreRecyclerAdapter<Note, NoteAdapter.Note
                         return false;
                     }
                 });
+                popupMenu.getMenu().add("Complete").setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(@NonNull MenuItem item) {
+                        holder.confirmComplete();
+
+                        return false;
+                    }
+                });
                 popupMenu.show();
             }
         });
@@ -125,6 +135,28 @@ public class NoteAdapter extends FirestoreRecyclerAdapter<Note, NoteAdapter.Note
             {
                 mImageNote.setVisibility(View.GONE);
             }
+        }
+        public void confirmComplete(){
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(itemView.getContext());
+            alertDialog.setTitle("Xac nhan hoan thanh");
+            alertDialog.setIcon(R.drawable.notes_icon);
+            alertDialog.setMessage("Bạn có muốn đánh dấu công việc đã hoàn thành");
+
+            alertDialog.setPositiveButton("Có", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+
+            alertDialog.setNegativeButton("Không", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+
+            alertDialog.show();
         }
     }
 }
