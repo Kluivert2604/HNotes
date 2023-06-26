@@ -9,6 +9,7 @@ public class Note {
     Timestamp timestamp;
     private String imagePath;
     String webLink;
+    private boolean completed;
 
     public Note() {
 
@@ -60,5 +61,13 @@ public class Note {
 
     public void setTimestamp(Timestamp timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
+    }
+
+    public boolean isCompleted() {
+        return completed;
     }
 }

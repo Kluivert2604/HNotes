@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.makeramen.roundedimageview.RoundedImageView;
@@ -68,28 +69,86 @@ public class NoteAdapter extends FirestoreRecyclerAdapter<Note, NoteAdapter.Note
                 popupMenu.getMenu().add("Delete").setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(@NonNull MenuItem item) {
-                        DocumentReference documentReference = Utility.getCollectionReferenceForNotes().document(docId);
-                        documentReference.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+//                        DocumentReference documentReference = Utility.getCollectionReferenceForNotes().document(docId);
+//                        documentReference.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+//                            @Override
+//                            public void onComplete(@NonNull Task<Void> task) {
+//                                if (task.isSuccessful())
+//                                {
+//                                    Toast.makeText(context, "Note Deleted Successful", Toast.LENGTH_SHORT).show();
+//                                }
+//                                else
+//                                {
+//                                    Toast.makeText(context, "Failed While Deleting Note", Toast.LENGTH_SHORT).show();
+//                                }
+//                            }
+//                        });
+                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(v.getContext());
+                        alertDialog.setTitle("Confirm");
+                        alertDialog.setIcon(R.drawable.ic_icon_delete);
+                        alertDialog.setMessage("Are you sure you want to DELETE the note?");
+                        alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful())
-                                {
-                                    Toast.makeText(context, "Note Deleted Successful", Toast.LENGTH_SHORT).show();
-                                }
-                                else
-                                {
-                                    Toast.makeText(context, "Failed While Deleting Note", Toast.LENGTH_SHORT).show();
-                                }
+                            public void onClick(DialogInterface dialog, int which) {
+                                DocumentReference documentReference = Utility.getCollectionReferenceForNotes().document(docId);
+                                documentReference.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        Toast.makeText(context, "Note Deleted Successful", Toast.LENGTH_SHORT).show();
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(context, "Failed While Deleting Note", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                             }
                         });
+                        alertDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        alertDialog.show();
                         return false;
                     }
                 });
                 popupMenu.getMenu().add("Complete").setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(@NonNull MenuItem item) {
-                        holder.confirmComplete();
-
+                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(v.getContext());
+                        alertDialog.setTitle("You've done the work");
+                        alertDialog.setIcon(R.drawable.ic_icon_done);
+                        alertDialog.setMessage("Do you want to mark work as complete?");
+                        alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Note completedNote = getItem(holder.getAdapterPosition());
+                                completedNote.setCompleted(true);
+                                DocumentReference documentReference = Utility.getCollectionReferenceForNotes().document(docId);
+                                documentReference.set(completedNote).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        MyDialog myDialog = new MyDialog(context);
+                                        myDialog.show();
+//                                        Toast.makeText(context, "Note marked as complete", Toast.LENGTH_SHORT).show();
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(context, "Failed to mark note as complete", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                                getSnapshots().getSnapshot(holder.getAdapterPosition()).getReference().delete();
+                            }
+                        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        alertDialog.show();
                         return false;
                     }
                 });
@@ -97,7 +156,6 @@ public class NoteAdapter extends FirestoreRecyclerAdapter<Note, NoteAdapter.Note
             }
         });
     }
-
     @NonNull
     @Override
     public NoteViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -135,28 +193,6 @@ public class NoteAdapter extends FirestoreRecyclerAdapter<Note, NoteAdapter.Note
             {
                 mImageNote.setVisibility(View.GONE);
             }
-        }
-        public void confirmComplete(){
-            AlertDialog.Builder alertDialog = new AlertDialog.Builder(itemView.getContext());
-            alertDialog.setTitle("You've done the work");
-            alertDialog.setIcon(R.drawable.notes_icon);
-            alertDialog.setMessage("Do you want to mark work as complete?");
-
-            alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                }
-            });
-
-            alertDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                }
-            });
-
-            alertDialog.show();
         }
     }
 }
