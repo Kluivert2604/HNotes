@@ -27,6 +27,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.makeramen.roundedimageview.RoundedImageView;
 
 public class NoteAdapter extends FirestoreRecyclerAdapter<Note, NoteAdapter.NoteViewHolder> {
@@ -54,6 +55,9 @@ public class NoteAdapter extends FirestoreRecyclerAdapter<Note, NoteAdapter.Note
                 context.startActivity(intent);
             }
         });
+
+
+
         mMenuPopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -62,7 +66,27 @@ public class NoteAdapter extends FirestoreRecyclerAdapter<Note, NoteAdapter.Note
                 popupMenu.getMenu().add("Pin/Unpin").setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(@NonNull MenuItem item) {
-                        Toast.makeText(v.getContext(), "This is Clicked", Toast.LENGTH_SHORT).show();
+                        DocumentReference documentReference = Utility.getCollectionReferenceForNotes().document(docId);
+                        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()){
+                                    DocumentSnapshot documentSnapshot = task.getResult();
+                                    if (documentSnapshot.exists()){
+                                        boolean pinned = documentSnapshot.getBoolean("pinned");
+                                        if (pinned){
+                                            holder.mImageViewPin.setImageResource(R.drawable.ic_icon_pin);
+                                        } else {
+                                            holder.mImageViewPin.setImageResource(0);
+                                        }
+                                        note.setPinned(pinned);
+                                        notifyDataSetChanged();
+                                    }
+                                } else {
+                                    // Xử lý lỗi khi cần
+                                }
+                            }
+                        });
                         return false;
                     }
                 });
@@ -167,6 +191,8 @@ public class NoteAdapter extends FirestoreRecyclerAdapter<Note, NoteAdapter.Note
         LinearLayout mLayoutNote;
         TextView mTitleTextView, mContentTextView, mTimestampTextView;
         RoundedImageView mImageNote;
+        ImageView mImageViewPin;
+
         public NoteViewHolder(@NonNull View itemView) {
             super(itemView);
             mTitleTextView = itemView.findViewById(R.id.note_Title_Text_View);
@@ -174,7 +200,10 @@ public class NoteAdapter extends FirestoreRecyclerAdapter<Note, NoteAdapter.Note
             mTimestampTextView = itemView.findViewById(R.id.note_Timestamp_Text_View);
             mLayoutNote = itemView.findViewById(R.id.layoutNote);
             mImageNote = itemView.findViewById(R.id.imageNote);
+            mImageViewPin = itemView.findViewById(R.id.imageView_pin);
+
         }
+
         public void setNote(Note note) {
             GradientDrawable gradientDrawable = (GradientDrawable) mLayoutNote.getBackground();
             if (note.getColor() != null)

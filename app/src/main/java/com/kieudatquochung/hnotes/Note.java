@@ -10,6 +10,7 @@ public class Note {
     private String imagePath;
     String webLink;
     private boolean completed;
+    private boolean pinned;
 
     public Note() {
 
@@ -69,5 +70,17 @@ public class Note {
 
     public boolean isCompleted() {
         return completed;
+    }
+
+    public boolean isPinned() {
+        return pinned;
+    }
+
+    public void setPinned(boolean pinned) {
+        this.pinned = pinned;
+    }
+
+    public int indexOf(Note note) {
+        return 0;
     }
 }

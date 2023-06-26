@@ -40,7 +40,7 @@
         <ImageView
             android:id="@+id/imageView_pin"
             android:layout_width="20dp"
-            android:layout_height="17dp"
+            android:layout_height="13dp"
             android:layout_gravity="end" />
     </LinearLayout>
     <TextView
