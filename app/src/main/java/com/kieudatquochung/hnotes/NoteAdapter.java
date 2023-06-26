@@ -138,18 +138,18 @@ public class NoteAdapter extends FirestoreRecyclerAdapter<Note, NoteAdapter.Note
         }
         public void confirmComplete(){
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(itemView.getContext());
-            alertDialog.setTitle("Xac nhan hoan thanh");
+            alertDialog.setTitle("You've done the work");
             alertDialog.setIcon(R.drawable.notes_icon);
-            alertDialog.setMessage("Bạn có muốn đánh dấu công việc đã hoàn thành");
+            alertDialog.setMessage("Do you want to mark work as complete?");
 
-            alertDialog.setPositiveButton("Có", new DialogInterface.OnClickListener() {
+            alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
                 }
             });
 
-            alertDialog.setNegativeButton("Không", new DialogInterface.OnClickListener() {
+            alertDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
