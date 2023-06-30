@@ -90,7 +90,7 @@ public class CreateNotesActivity extends AppCompatActivity {
         mNotesTitleText.setText(title);
         mNotesContentText.setText(content);
 
-        selectedNoteColor = "#333333";
+        selectedNoteColor = "#D8F7FA";
         selectedImagePath = "";
 
         initMiscellaneous();
@@ -199,7 +199,7 @@ public class CreateNotesActivity extends AppCompatActivity {
         layoutMiscellaneous.findViewById(R.id.viewColor1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                selectedNoteColor = "#333333";
+                selectedNoteColor = "#D8F7FA";
                 imageColor1.setImageResource(R.drawable.baseline_done_24);
                 imageColor2.setImageResource(0);
                 imageColor3.setImageResource(0);

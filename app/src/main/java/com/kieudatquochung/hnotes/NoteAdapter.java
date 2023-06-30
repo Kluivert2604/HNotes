@@ -57,7 +57,6 @@ public class NoteAdapter extends FirestoreRecyclerAdapter<Note, NoteAdapter.Note
         });
 
 
-
         mMenuPopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -66,47 +65,13 @@ public class NoteAdapter extends FirestoreRecyclerAdapter<Note, NoteAdapter.Note
                 popupMenu.getMenu().add("Pin/Unpin").setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(@NonNull MenuItem item) {
-                        DocumentReference documentReference = Utility.getCollectionReferenceForNotes().document(docId);
-                        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                if (task.isSuccessful()){
-                                    DocumentSnapshot documentSnapshot = task.getResult();
-                                    if (documentSnapshot.exists()){
-                                        boolean pinned = documentSnapshot.getBoolean("pinned");
-                                        if (pinned){
-                                            holder.mImageViewPin.setImageResource(R.drawable.ic_icon_pin);
-                                        } else {
-                                            holder.mImageViewPin.setImageResource(0);
-                                        }
-                                        note.setPinned(pinned);
-                                        notifyDataSetChanged();
-                                    }
-                                } else {
-                                    // Xử lý lỗi khi cần
-                                }
-                            }
-                        });
+                        Toast.makeText(v.getContext(), "This Note Clicked", Toast.LENGTH_SHORT).show();
                         return false;
                     }
                 });
                 popupMenu.getMenu().add("Delete").setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(@NonNull MenuItem item) {
-//                        DocumentReference documentReference = Utility.getCollectionReferenceForNotes().document(docId);
-//                        documentReference.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-//                            @Override
-//                            public void onComplete(@NonNull Task<Void> task) {
-//                                if (task.isSuccessful())
-//                                {
-//                                    Toast.makeText(context, "Note Deleted Successful", Toast.LENGTH_SHORT).show();
-//                                }
-//                                else
-//                                {
-//                                    Toast.makeText(context, "Failed While Deleting Note", Toast.LENGTH_SHORT).show();
-//                                }
-//                            }
-//                        });
                         AlertDialog.Builder alertDialog = new AlertDialog.Builder(v.getContext());
                         alertDialog.setTitle("Confirm");
                         alertDialog.setIcon(R.drawable.ic_icon_delete);

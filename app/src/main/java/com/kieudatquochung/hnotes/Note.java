@@ -10,26 +10,8 @@ public class Note {
     private String imagePath;
     String webLink;
     private boolean completed;
-    private boolean pinned;
 
     public Note() {
-
-    }
-
-    public String getWebLink() {
-        return webLink;
-    }
-
-    public void setWebLink(String webLink) {
-        this.webLink = webLink;
-    }
-
-    public String getImagePath() {
-        return imagePath;
-    }
-
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
     }
 
     public String getColor() {
@@ -64,23 +46,28 @@ public class Note {
         this.timestamp = timestamp;
     }
 
-    public void setCompleted(boolean completed) {
-        this.completed = completed;
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
+
+    public String getWebLink() {
+        return webLink;
+    }
+
+    public void setWebLink(String webLink) {
+        this.webLink = webLink;
     }
 
     public boolean isCompleted() {
         return completed;
     }
 
-    public boolean isPinned() {
-        return pinned;
-    }
-
-    public void setPinned(boolean pinned) {
-        this.pinned = pinned;
-    }
-
-    public int indexOf(Note note) {
-        return 0;
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
     }
 }
+
