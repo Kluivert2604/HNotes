@@ -52,22 +52,32 @@ public class NotesActivity extends AppCompatActivity {
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String newText) {
-                processSearch(newText);
                 return false;
             }
             @Override
             public boolean onQueryTextChange(String newText) {
                 processSearch(newText);
-                return false;
+                return true;
             }
         });
         setupRecyclerView();
     }
-    private void processSearch(String newText)
-    {
-        Query query = Utility.getCollectionReferenceForNotes().orderBy("title").startAt(newText).endAt(newText+ "\uf8ff");
-        FirestoreRecyclerOptions<Note> options = new FirestoreRecyclerOptions.Builder<Note>()
-                .setQuery(query, Note.class).build();
+    private void processSearch(String newText) {
+        Query query;
+        FirestoreRecyclerOptions<Note> options;
+        if (newText.trim().isEmpty()) {
+            // Không có văn bản tìm kiếm, hiển thị tất cả các ghi chú theo thứ tự ban đầu
+            query = Utility.getCollectionReferenceForNotes().orderBy("title");
+        } else {
+            query = Utility.getCollectionReferenceForNotes()
+                    .orderBy("title")
+                    .whereGreaterThanOrEqualTo("title", newText)
+                    .whereLessThan("title", newText + "\uf8ff");
+        }
+        options = new FirestoreRecyclerOptions.Builder<Note>()
+                .setQuery(query, Note.class)
+                .build();
+
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         noteAdapter = new NoteAdapter(options, this);
         noteAdapter.startListening();
